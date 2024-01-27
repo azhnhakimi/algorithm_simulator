@@ -19,7 +19,7 @@ public class Tile extends JPanel {
     int height = 50;
     int fontSize;
     
-public Tile(int width, int processID) {
+public Tile(int width, int processID, int currentTime) {
         this.width = width;
         fontSize = 15;
 
@@ -38,8 +38,14 @@ public Tile(int width, int processID) {
         label.setForeground(new Color(CustomColor.getForegroundColor(color)));
         label.setAlignmentX(Component.CENTER_ALIGNMENT); 
 
+        JLabel timeLabel = new JLabel("T" + String.valueOf(currentTime));
+        timeLabel.setFont(new Font(font.getName(), font.getStyle(), fontSize * 5 / 6));
+        timeLabel.setForeground(new Color(CustomColor.getForegroundColor(color)));
+        timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT); 
+
         add(Box.createVerticalGlue()); 
         add(label);
+        add(timeLabel);
         add(Box.createVerticalGlue()); 
     }
     

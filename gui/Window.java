@@ -1,22 +1,18 @@
 package gui;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 public class Window extends JFrame{
-
-    JPanel redPanel;
-    JPanel bluePanel;
     
-    public Window(List<Integer> stackHistory){
+    public Window(){
         this.setSize(new Dimension(1500,800));
         this.setTitle("Process Scheduling Simulation");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,7 +35,7 @@ public class Window extends JFrame{
         preEmptiveSJF.addActionListener(new PreEmptiveSJFAction());
 
         // resizing the image icon for the drop down menu
-        ImageIcon downIcon = new ImageIcon("down.png");
+        ImageIcon downIcon = new ImageIcon("assets/down.png");
         Image scaledIcon = downIcon.getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH);
         algorithmOptions.setIcon(new ImageIcon(scaledIcon));
 
@@ -53,24 +49,11 @@ public class Window extends JFrame{
         dropdownContainer.add(algorithmOptions);
         this.setJMenuBar(dropdownContainer);
 
-        OutputScreen outputScreen = new OutputScreen(stackHistory);
-        getContentPane().add(outputScreen);
-
-
-        // for testing purposes
-        redPanel = new JPanel();
-        redPanel.setBackground(Color.red);
-        redPanel.setOpaque(true);
-
-        bluePanel = new JPanel();
-        bluePanel.setBackground(Color.blue);
-        bluePanel.setOpaque(true);
-
-
-
         // set visibility to last
         this.setVisible(true);
     }
+
+    // add all respective algorithm panels here
 
     private class RoundRobinAction implements ActionListener{
         @Override
@@ -86,7 +69,7 @@ public class Window extends JFrame{
         @Override
         public void actionPerformed(ActionEvent e) {
             getContentPane().removeAll();
-            getContentPane().add(bluePanel);
+            // getContentPane().add();
             revalidate();
             repaint();
         }

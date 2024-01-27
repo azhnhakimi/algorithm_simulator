@@ -1,10 +1,14 @@
 package algorithms;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import component.Process;
 import utils.Printer;
 import utils.Toolbox;
+import utils.TurnAroundTimeVal;
+import utils.WaitingTimeVal;
 
 public class RoundRobin {
 
@@ -15,18 +19,61 @@ public class RoundRobin {
     List<Process> readyQueue = new ArrayList<>();
     List<Process> finishedQueue = new ArrayList<>();
     List<Process> currentlyProcessingQueue = new ArrayList<>();
+
     List<Integer> stackHistory = new ArrayList<>();
+    List<Integer> timeStackHistory = new ArrayList<>();
+    Map<Integer, TurnAroundTimeVal> turnaroundTimeData = new HashMap<>();
+    Map<Integer, WaitingTimeVal> waitingTimeData = new HashMap<>();
+    int processCount;
+
+    int totalTurnaroundTime;
+    int totalWaitingTime;
+    double averageTurnaroundTime;
+    double averageWaitingTime;
     
     public RoundRobin(int QUANTUM_TIME){
         this.QUANTUM_TIME = QUANTUM_TIME;
+        this.processCount = 0;
     }
 
     public void addProcess(Process process){
         processList.add(process);
     }
 
+    public int getTotalTurnaroundTime(){
+        return this.totalTurnaroundTime;
+    }
+
+    public int getTotalWaitingTime(){
+        return this.totalWaitingTime;
+    }
+
+    public double getAverageTurnaroundTime(){
+        return this.averageTurnaroundTime;
+    }
+
+    public double getAverageWaitingTime(){
+        return this.averageWaitingTime;
+    }
+
     public List<Integer> getStackHistory(){
         return this.stackHistory;
+    }
+
+    public List<Integer> getTimeStackHistory(){
+        return this.timeStackHistory;
+    }
+
+    public Map<Integer, TurnAroundTimeVal> getTurnaroundTimeData(){
+        return this.turnaroundTimeData;
+    }
+
+    public Map<Integer, WaitingTimeVal> getWaitingTimeData(){
+        return this.waitingTimeData;
+    }
+
+    public int getProcessCount(){
+        return this.processCount;
     }
 
     public void compute(){
@@ -76,6 +123,7 @@ public class RoundRobin {
                 }
             }
             stackHistory.add(readyQueue.get(0).getProcessID());
+            timeStackHistory.add(currentTime);
 
 
             // actual computation begins
@@ -104,6 +152,10 @@ public class RoundRobin {
                     }else{
                         process.setFinishTime(currentTime);
                         finishedQueue.add(process);
+                        turnaroundTimeData.put(
+                            process.getProcessID(), new TurnAroundTimeVal(process.getProcessID(), process.getArrivalTime(), process.getFinishedTime(), Toolbox.calculateTurnaroundTime(process.getFinishedTime(), process.getArrivalTime())
+                        ));
+                        processCount++;
                     }
                 }
                 readyQueue = updatedReadyQueue;
@@ -148,6 +200,11 @@ public class RoundRobin {
         for(Process process : finishedQueue){
             process.setTurnaroundTime(Toolbox.calculateTurnaroundTime(process.getFinishedTime(), process.getArrivalTime()));
             process.setWaitingTime(Toolbox.calculateWaitingTime(process.getTurnaroundTime(), process.getInitialBurstTime()));
+
+            waitingTimeData.put(
+                process.getProcessID(), new WaitingTimeVal(process.getProcessID(), process.getInitialBurstTime(), process.getTurnaroundTime(), process.getWaitingTime())
+            );
+            
             System.out.println("ID: " +  process.getProcessID() + " Finish Time: " + process.getFinishedTime() + " Turnaround Time: " + process.getTurnaroundTime() + " Waiting Time: " + process.getWaitingTime());
         }
         System.out.println();
@@ -159,6 +216,11 @@ public class RoundRobin {
         
         System.out.println("Total Waiting Time : " + Toolbox.calculateTotalWaitingTime(finishedQueue));
         System.out.println("Average Waiting Time : " + Toolbox.calculateAverageWaitingTime(Toolbox.calculateTotalWaitingTime(finishedQueue), finishedQueue.size()));
+
+        this.totalTurnaroundTime = Toolbox.calculateTotalTurnaroundTime(finishedQueue);
+        this.totalWaitingTime = Toolbox.calculateTotalWaitingTime(finishedQueue);
+        this.averageTurnaroundTime = Toolbox.calculateAverageTurnaroundTime(Toolbox.calculateTotalTurnaroundTime(finishedQueue), finishedQueue.size());
+        this.averageWaitingTime = Toolbox.calculateAverageWaitingTime(Toolbox.calculateTotalWaitingTime(finishedQueue), finishedQueue.size());
         
         System.out.println();
         System.out.println();
