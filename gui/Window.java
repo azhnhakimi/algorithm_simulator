@@ -25,14 +25,17 @@ public class Window extends JFrame{
         JMenu algorithmOptions = new JMenu("Scheduling Algorithms");
 
         JMenuItem roundRobin = new JMenuItem("Round Robin");
-        JMenuItem preEmptiveSJF = new JMenuItem("Preemptive SJF");
         JMenuItem nonPreEmptiveSJF = new JMenuItem("Non Preemptive SJF");
-        JMenuItem preemptivePriority = new JMenuItem("Preemptive Priority");
         JMenuItem nonPreemptivePriority = new JMenuItem("Non Preemptive Priority");
+        JMenuItem preEmptiveSJF = new JMenuItem("Preemptive SJF");
+        JMenuItem preemptivePriority = new JMenuItem("Preemptive Priority");
 
         // adding action listeners for each of the menu items
         roundRobin.addActionListener(new RoundRobinAction());
-        preEmptiveSJF.addActionListener(new PreEmptiveSJFAction());
+        nonPreEmptiveSJF.addActionListener(new BasicInputAction(nonPreEmptiveSJF.getText()));
+        nonPreemptivePriority.addActionListener(new BasicInputAction(nonPreemptivePriority.getText()));
+        preEmptiveSJF.addActionListener(new BasicInputAction(preEmptiveSJF.getText()));
+        preemptivePriority.addActionListener(new BasicInputAction(preemptivePriority.getText()));
 
         // resizing the image icon for the drop down menu
         ImageIcon downIcon = new ImageIcon("assets/down.png");
@@ -65,13 +68,21 @@ public class Window extends JFrame{
         }
     }
 
-    private class PreEmptiveSJFAction implements ActionListener{
+    private class BasicInputAction implements ActionListener{
+
+        private String text;
+
+        public BasicInputAction(String text) {
+            this.text = text;
+        }
+        
         @Override
         public void actionPerformed(ActionEvent e) {
             getContentPane().removeAll();
-            // getContentPane().add();
+            getContentPane().add(new BasicInputPanel(text));
             revalidate();
             repaint();
         }
+        
     }
 }

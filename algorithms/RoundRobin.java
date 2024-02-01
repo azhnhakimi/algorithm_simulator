@@ -14,7 +14,6 @@ public class RoundRobin {
 
     int QUANTUM_TIME;
 
-
     List<Process> processList = new ArrayList<>();
     List<Process> readyQueue = new ArrayList<>();
     List<Process> finishedQueue = new ArrayList<>();
