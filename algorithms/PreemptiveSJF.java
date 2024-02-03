@@ -2,17 +2,16 @@ package algorithms;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
-import java.util.PriorityQueue;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 import component.Process;
 
 public class PreemptiveSJF {
 
     List<Process> processList = new ArrayList<>();
-    List<Process> readyQueue = new ArrayList<>();
     List<Process> finishedQueue = new ArrayList<>();
     List<Process> currentlyProcessingQueue = new ArrayList<>();
 
@@ -27,14 +26,13 @@ public class PreemptiveSJF {
     double averageTurnaroundTime;
     double averageWaitingTime;
 
-    int timeQuantum = 1; // Adjust the time quantum as needed
-
     public PreemptiveSJF() {
         this.processCount = 0;
     }
 
     public void addProcess(Process process) {
         processList.add(process);
+        processCount++;
     }
 
     public int getTotalTurnaroundTime() {
@@ -94,7 +92,7 @@ public class PreemptiveSJF {
                 waitingTimeData.put(currentProcess.getProcessID(), new WaitingTimeVal(waitingTime));
 
                 // Execute the process for a time quantum (or until completion)
-                int executionTime = Math.min(currentProcess.getBurstTime(), timeQuantum);
+                int executionTime = 1; // Adjust this as needed
                 stackHistory.add(currentProcess.getProcessID());
                 timeStackHistory.add(executionTime);
 
