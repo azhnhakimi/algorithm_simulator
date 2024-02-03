@@ -32,6 +32,7 @@ public class Window extends JFrame{
 
         // adding action listeners for each of the menu items
         roundRobin.addActionListener(new RoundRobinAction());
+        preEmptiveSJF.addActionListener(new PreemptiveSJFAction());
         nonPreEmptiveSJF.addActionListener(new BasicInputAction(nonPreEmptiveSJF.getText()));
         nonPreemptivePriority.addActionListener(new BasicInputAction(nonPreemptivePriority.getText()));
         preEmptiveSJF.addActionListener(new BasicInputAction(preEmptiveSJF.getText()));
@@ -63,6 +64,16 @@ public class Window extends JFrame{
         public void actionPerformed(ActionEvent e) {
             getContentPane().removeAll();
             getContentPane().add(new RoundRobinPanel());
+            revalidate();
+            repaint();
+        }
+    }
+
+    private class PreemptiveSJFAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            getContentPane().removeAll();
+            getContentPane().add(new PreemptiveSJFPanel());
             revalidate();
             repaint();
         }
