@@ -19,7 +19,6 @@ import algorithms.PreemptiveSJF;
 import utils.ProcessContainer;
 
 import java.awt.Font;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
@@ -28,13 +27,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
-import utils.TurnAroundTimeVal;  // Import TurnAroundTimeVal class
-import utils.WaitingTimeVal;     // Import WaitingTimeVal class
+import utils.TurnAroundTimeVal;  
+import utils.WaitingTimeVal;     
 
 public class PreemptiveSJFPanel extends JPanel {
 
     HeaderTitle headerTitle = new HeaderTitle("Preemptive SJF");
-    int quantumCount;
 
     int arrivalTime;
     int burstTime;
@@ -88,7 +86,6 @@ public class PreemptiveSJFPanel extends JPanel {
         inputPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         inputPanel.setBackground(new Color(0xFFF8DC));
 
-        CustomField quantumTimeField = new CustomField("Quantum Time");
         CustomField field1 = new CustomField("Arrival Time");
         CustomField field2 = new CustomField("Burst TIme");
         CustomField field3 = new CustomField("Priority");
@@ -146,9 +143,11 @@ public class PreemptiveSJFPanel extends JPanel {
                 preemptiveSJF.compute();
 
                 OutputScreen outputScreen = new OutputScreen(
-                    preemptiveSJF.getStackHistory(), preemptiveSJF.getTimeStackHistory(), preemptiveSJF.getTurnaroundTimeData(),
-                     preemptiveSJF.getWaitingTimeData(), preemptiveSJF.getProcessCount(), preemptiveSJF.getTotalTurnaroundTime(),
-                      preemptiveSJF.getTotalWaitingTime(), preemptiveSJF.getAverageTurnaroundTime(), preemptiveSJF.getAverageWaitingTime()
+                        preemptiveSJF.getStackHistory(), preemptiveSJF.getTimeStackHistory(),
+                        preemptiveSJF.getTurnaroundTimeData(), preemptiveSJF.getWaitingTimeData(),
+                        preemptiveSJF.getProcessCount(), preemptiveSJF.getTotalTurnaroundTime(),
+                        preemptiveSJF.getTotalWaitingTime(), preemptiveSJF.getAverageTurnaroundTime(),
+                        preemptiveSJF.getAverageWaitingTime()
                 );
 
                 PreemptiveSJFPanel.this.removeAll();
@@ -158,34 +157,12 @@ public class PreemptiveSJFPanel extends JPanel {
             }
         });
 
-        JButton setQuantumCount = new JButton("SET");
-        setQuantumCount.setFocusable(false);
-        setQuantumCount.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int result = quantumTimeField.getValue();
-                if (result != 0) {
-                    PreemptiveSJFPanel.this.quantumCount = result;
-                    setQuantumCount.setEnabled(false);
-                    quantumTimeField.setEditable(false);
-                    PreemptiveSJFPanel.this.requestFocusInWindow();
-
-                    inputPanel.add(field1);
-                    inputPanel.add(field2);
-                    inputPanel.add(field3);
-                    inputPanel.add(addProcessBtn);
-                    inputPanel.add(simulateBtn);
-                    inputPanel.add(Box.createRigidArea(new Dimension(0, 180)));
-
-                    revalidate();
-                    repaint();
-
-                }
-            }
-        });
-
-        inputPanel.add(quantumTimeField);
-        inputPanel.add(setQuantumCount);
+        inputPanel.add(field1);
+        inputPanel.add(field2);
+        inputPanel.add(field3);
+        inputPanel.add(addProcessBtn);
+        inputPanel.add(simulateBtn);
+        inputPanel.add(Box.createRigidArea(new Dimension(0, 180)));
 
         JScrollPane displayPanel = new JScrollPane(table);
         displayPanel.setBackground(Color.WHITE);
@@ -196,5 +173,4 @@ public class PreemptiveSJFPanel extends JPanel {
 
         this.setOpaque(true);
     }
-
 }
