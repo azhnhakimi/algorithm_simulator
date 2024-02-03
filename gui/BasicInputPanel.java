@@ -157,21 +157,22 @@ public class BasicInputPanel extends JPanel {
         this.setOpaque(true); 
     }
 
-    public void runNonPreSJF(){
+    private void runNonPreSJF() {
         NonPreemptiveSJF nps = new NonPreemptiveSJF();
 
-        for(ProcessContainer process : processContainerArray){
+        for (ProcessContainer process : processContainerArray) {
             nps.addProcess(new Process(process.getProcessId(), process.getArrivalTime(), process.getBurstTime(), process.getPriority()));
         }
 
+        nps.compute();
+
         OutputScreen outputScreen = new OutputScreen(
-                    nps.getStackHistory(), nps.getTimeStackHistory(), nps.getTurnaroundTimeData(), nps.getWaitingTimeData(), nps.getProcessCount(), nps.getTotalTurnaroundTime(), nps.getTotalWaitingTime(), nps.getAverageTurnaroundTime(), nps.getAverageWaitingTime()
+                nps.getStackHistory(), nps.getTimeStackHistory(), nps.getTurnaroundTimeData(), nps.getWaitingTimeData(), nps.getProcessCount(), nps.getTotalTurnaroundTime(), nps.getTotalWaitingTime(), nps.getAverageTurnaroundTime(), nps.getAverageWaitingTime()
         );
 
         BasicInputPanel.this.removeAll();
         BasicInputPanel.this.add(outputScreen);
-        revalidate();
-        repaint();
+        BasicInputPanel.this.revalidate();
+        BasicInputPanel.this.repaint();
     }
-    
 }
