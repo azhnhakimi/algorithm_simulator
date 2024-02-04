@@ -73,7 +73,7 @@ public class Window extends JFrame{
         @Override
         public void actionPerformed(ActionEvent e) {
             getContentPane().removeAll();
-            getContentPane().add(new PreemptiveSJFPanel());
+            // getContentPane().add(new PreemptiveSJFPanel());
             revalidate();
             repaint();
         }

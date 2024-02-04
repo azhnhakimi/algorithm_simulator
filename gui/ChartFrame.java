@@ -24,6 +24,8 @@ public class ChartFrame extends JPanel {
             
             int processID = stackHistory.get(i);
             int currentTime = timeStackHistory.get(i);
+
+            // System.out.println(processID + " " + currentTime);
             
             Tile processTile = new Tile(45, processID, currentTime);
             this.add(processTile);

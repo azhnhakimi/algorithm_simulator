@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import component.Process;
-import utils.Printer;
+
 import utils.Toolbox;
 import utils.TurnAroundTimeVal;
 import utils.WaitingTimeVal;
@@ -72,6 +72,7 @@ public class RoundRobin {
     }
 
     public int getProcessCount(){
+        System.out.println(this.processCount);
         return this.processCount;
     }
 
@@ -84,10 +85,6 @@ public class RoundRobin {
 
             // checks if all processes are complete
             if(processList.isEmpty() && readyQueue.isEmpty()){
-                Printer.printCurrentTime(String.valueOf(currentTime));
-                Printer.printQuantumTime(String.valueOf(quantumCount));
-                Printer.printReadyQueue(readyQueue);
-                System.out.println();
                 break;
             }
 
@@ -103,14 +100,8 @@ public class RoundRobin {
             processList = updatedProcessList;
 
             // updates the currentTime and quantumCount
-            Printer.printCurrentTime(String.valueOf(currentTime));
             currentTime++;
-
-            Printer.printQuantumTime(String.valueOf(quantumCount));
             quantumCount++;
-
-            // prints the processes in the readyQueue
-            Printer.printReadyQueue(readyQueue);
 
             // fetches new process if no process currently being processed
             if(currentlyProcessingQueue.isEmpty()){
@@ -130,8 +121,6 @@ public class RoundRobin {
             // deducting burst time
             Process currentProcess = currentlyProcessingQueue.get(0);
             int burstTime = currentProcess.getBurstTime();
-
-            Printer.printBurstTime(String.valueOf(currentProcess.getProcessID()), String.valueOf(currentProcess.getBurstTime()));
 
             int newBurstTime = burstTime - 1;
             currentProcess.setBurstTime(newBurstTime);
@@ -195,36 +184,22 @@ public class RoundRobin {
             }
         }
 
-        // printing out the results
-        for(Process process : finishedQueue){
-            process.setTurnaroundTime(Toolbox.calculateTurnaroundTime(process.getFinishedTime(), process.getArrivalTime()));
-            process.setWaitingTime(Toolbox.calculateWaitingTime(process.getTurnaroundTime(), process.getInitialBurstTime()));
+            // setting the results
+            for(Process process : finishedQueue){
+                process.setTurnaroundTime(Toolbox.calculateTurnaroundTime(process.getFinishedTime(), process.getArrivalTime()));
+                process.setWaitingTime(Toolbox.calculateWaitingTime(process.getTurnaroundTime(), process.getInitialBurstTime()));
 
-            waitingTimeData.put(
-                process.getProcessID(), new WaitingTimeVal(process.getProcessID(), process.getInitialBurstTime(), process.getTurnaroundTime(), process.getWaitingTime())
-            );
-            
-            System.out.println("ID: " +  process.getProcessID() + " Finish Time: " + process.getFinishedTime() + " Turnaround Time: " + process.getTurnaroundTime() + " Waiting Time: " + process.getWaitingTime());
+                waitingTimeData.put(
+                    process.getProcessID(), new WaitingTimeVal(process.getProcessID(), process.getInitialBurstTime(), process.getTurnaroundTime(), process.getWaitingTime())
+                );
+            }
+
+            this.totalTurnaroundTime = Toolbox.calculateTotalTurnaroundTime(finishedQueue);
+            this.totalWaitingTime = Toolbox.calculateTotalWaitingTime(finishedQueue);
+            this.averageTurnaroundTime = Toolbox.calculateAverageTurnaroundTime(Toolbox.calculateTotalTurnaroundTime(finishedQueue), finishedQueue.size());
+            this.averageWaitingTime = Toolbox.calculateAverageWaitingTime(Toolbox.calculateTotalWaitingTime(finishedQueue), finishedQueue.size());
+        
         }
-        System.out.println();
-
-        System.out.println("Total Turnaround Time : " + Toolbox.calculateTotalTurnaroundTime(finishedQueue));
-        System.out.println("Average Turnaround Time : " + Toolbox.calculateAverageTurnaroundTime(Toolbox.calculateTotalTurnaroundTime(finishedQueue), finishedQueue.size()));
-        
-        System.out.println();
-        
-        System.out.println("Total Waiting Time : " + Toolbox.calculateTotalWaitingTime(finishedQueue));
-        System.out.println("Average Waiting Time : " + Toolbox.calculateAverageWaitingTime(Toolbox.calculateTotalWaitingTime(finishedQueue), finishedQueue.size()));
-
-        this.totalTurnaroundTime = Toolbox.calculateTotalTurnaroundTime(finishedQueue);
-        this.totalWaitingTime = Toolbox.calculateTotalWaitingTime(finishedQueue);
-        this.averageTurnaroundTime = Toolbox.calculateAverageTurnaroundTime(Toolbox.calculateTotalTurnaroundTime(finishedQueue), finishedQueue.size());
-        this.averageWaitingTime = Toolbox.calculateAverageWaitingTime(Toolbox.calculateTotalWaitingTime(finishedQueue), finishedQueue.size());
-        
-        System.out.println();
-        System.out.println();
-        
-    }
 
     
 }

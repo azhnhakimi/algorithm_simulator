@@ -13,66 +13,114 @@ import utils.WaitingTimeVal;
 
 public class NonPreemptiveSJF {
 
-    private List<Process> processList = new ArrayList<>();
-    private List<Process> finishedQueue = new ArrayList<>();
-    private Map<Integer, TurnAroundTimeVal> turnaroundTimeData = new HashMap<>();
-    private Map<Integer, WaitingTimeVal> waitingTimeData = new HashMap<>();
-    private int totalTurnaroundTime = 0;
-    private int totalWaitingTime = 0;
-    private double averageTurnaroundTime = 0;
-    private double averageWaitingTime = 0;
+    List<Process> processList = new ArrayList<>();
+    List<Process> readyQueue = new ArrayList<>();
+    List<Process> finishedQueue = new ArrayList<>();
+    List<Process> currentlyProcessingQueue = new ArrayList<>();
 
-    // For Gantt chart visualization
-    private List<Integer> stackHistory = new ArrayList<>();
-    private List<Integer> timeStackHistory = new ArrayList<>();
+    List<Integer> stackHistory = new ArrayList<>();
+    List<Integer> timeStackHistory = new ArrayList<>();
+    Map<Integer, TurnAroundTimeVal> turnaroundTimeData = new HashMap<>();
+    Map<Integer, WaitingTimeVal> waitingTimeData = new HashMap<>();
+    int processCount = 0;
+
+    int totalTurnaroundTime;
+    int totalWaitingTime;
+    double averageTurnaroundTime;
+    double averageWaitingTime;
 
     public void addProcess(Process process) {
         processList.add(process);
     }
 
     public void compute() {
+
         int currentTime = 0;
-        while (!processList.isEmpty()) {
-            List<Process> availableProcesses = new ArrayList<>();
-            for (Process process : processList) {
-                if (process.getArrivalTime() <= currentTime) {
-                    availableProcesses.add(process);
-                }
+        this.processCount = processList.size();
+
+        while (true) {
+
+            // checks if all processes are complete
+            if(processList.isEmpty() && readyQueue.isEmpty()){
+                break;
             }
 
-            if (availableProcesses.isEmpty()) {
-                currentTime++; // No processes available at the current time
+            // adds processes to the readyQueue as they arrive
+            List<Process> updatedProcessList = new ArrayList<>();
+            for(Process process : processList){
+                if(process.getArrivalTime() == currentTime){
+                    readyQueue.add(process);
+                }else{
+                    updatedProcessList.add(process);
+                }
+            }
+            processList = updatedProcessList;
+
+            // updates the currentTime
+            currentTime++;
+            
+            // fetches new process if no process currently being processed
+            if(currentlyProcessingQueue.isEmpty()){
+                // case : no process have arrived yet
+                if(readyQueue.isEmpty()){
+                    continue;
+                }else{
+                    Process nextProcess = Collections.min(readyQueue, Comparator.comparingInt(Process::getInitialBurstTime));
+                    currentlyProcessingQueue.add(nextProcess);
+                }
+            }
+            stackHistory.add(currentlyProcessingQueue.get(0).getProcessID());
+            timeStackHistory.add(currentTime);
+
+            // actual computation begins
+
+            // deducting burst time
+            Process currentProcess = currentlyProcessingQueue.get(0);
+            int burstTime = currentProcess.getBurstTime();
+
+            int newBurstTime = burstTime - 1;
+            currentProcess.setBurstTime(newBurstTime);
+
+            // checks if process has finished
+            if(newBurstTime <= 0){
+                
+                // remove from currentlyProcessingQueue
+                currentlyProcessingQueue.remove(0);
+
+                // remove from readyQueue
+                // add to finishedQueue
+                List<Process> updatedReadyQueue = new ArrayList<>();
+                for(Process process : readyQueue){
+                    if(process.getProcessID() != currentProcess.getProcessID()){
+                        updatedReadyQueue.add(process);
+                    }else{
+                        process.setFinishTime(currentTime);
+                        finishedQueue.add(process);
+                        turnaroundTimeData.put(
+                            process.getProcessID(), new TurnAroundTimeVal(process.getProcessID(), process.getArrivalTime(), process.getFinishedTime(), Toolbox.calculateTurnaroundTime(process.getFinishedTime(), process.getArrivalTime())
+                        ));
+                    }
+                }
+                readyQueue = updatedReadyQueue;
                 continue;
             }
 
-            Process nextProcess = Collections.min(availableProcesses, Comparator.comparingInt(Process::getBurstTime));
-            processList.remove(nextProcess);
-
-            // Simulate process execution
-            int finishTime = currentTime + nextProcess.getBurstTime();
-            nextProcess.setFinishTime(finishTime);
-            finishedQueue.add(nextProcess);
-
-            // Track the process execution for Gantt chart
-            stackHistory.add(nextProcess.getProcessID());
-            timeStackHistory.add(currentTime);
-
-            // Calculate turnaround and waiting times
-            int turnaroundTime = finishTime - nextProcess.getArrivalTime();
-            int waitingTime = turnaroundTime - nextProcess.getBurstTime();
-            totalTurnaroundTime += turnaroundTime;
-            totalWaitingTime += waitingTime;
-
-            // Update data structures for GUI display
-            turnaroundTimeData.put(nextProcess.getProcessID(), new TurnAroundTimeVal(nextProcess.getProcessID(), nextProcess.getArrivalTime(), finishTime, turnaroundTime));
-            waitingTimeData.put(nextProcess.getProcessID(), new WaitingTimeVal(nextProcess.getProcessID(), nextProcess.getBurstTime(), turnaroundTime, waitingTime));
-
-            currentTime = finishTime; // Move the current time forward to the end of the execution
         }
 
-        // Calculate the average values
-        averageTurnaroundTime = Toolbox.calculateAverageTurnaroundTime(totalTurnaroundTime, finishedQueue.size());
-        averageWaitingTime = Toolbox.calculateAverageWaitingTime(totalWaitingTime, finishedQueue.size());
+        // setting the results
+        for(Process process : finishedQueue){
+            process.setTurnaroundTime(Toolbox.calculateTurnaroundTime(process.getFinishedTime(), process.getArrivalTime()));
+            process.setWaitingTime(Toolbox.calculateWaitingTime(process.getTurnaroundTime(), process.getInitialBurstTime()));
+
+            waitingTimeData.put(
+                process.getProcessID(), new WaitingTimeVal(process.getProcessID(), process.getInitialBurstTime(), process.getTurnaroundTime(), process.getWaitingTime())
+            );
+        }
+
+        this.totalTurnaroundTime = Toolbox.calculateTotalTurnaroundTime(finishedQueue);
+        this.totalWaitingTime = Toolbox.calculateTotalWaitingTime(finishedQueue);
+        this.averageTurnaroundTime = Toolbox.calculateAverageTurnaroundTime(Toolbox.calculateTotalTurnaroundTime(finishedQueue), finishedQueue.size());
+        this.averageWaitingTime = Toolbox.calculateAverageWaitingTime(Toolbox.calculateTotalWaitingTime(finishedQueue), finishedQueue.size());
     }
 
     // Rest of the getters...
@@ -113,6 +161,7 @@ public class NonPreemptiveSJF {
     }
 
     public int getProcessCount() {
-        return finishedQueue.size();
+        // System.out.println(this.processCount);
+        return this.processCount;
     }
 }
