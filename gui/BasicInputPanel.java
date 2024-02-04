@@ -13,6 +13,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import algorithms.NonPreemptivePriority;
 import algorithms.NonPreemptiveSJF;
 import algorithms.PreemptiveSJF;
 
@@ -133,7 +134,7 @@ public class BasicInputPanel extends JPanel {
                 if(algorithmSelected.equals("Non Preemptive SJF")){
                     runNonPreSJF();
                 }else if(algorithmSelected.equals("Non Preemptive Priority")){
-
+                    runNonPrePriority();
                 }else if(algorithmSelected.equals("Preemptive SJF")){
                     runPreSJF();
                 }
@@ -156,6 +157,25 @@ public class BasicInputPanel extends JPanel {
         this.add(displayPanel, BorderLayout.CENTER);
 
         this.setOpaque(true); 
+    }
+
+    public void runNonPrePriority(){
+        NonPreemptivePriority npp = new NonPreemptivePriority();
+
+        for (ProcessContainer process : processContainerArray) {
+            npp.addProcess(new Process(process.getProcessId(), process.getArrivalTime(), process.getBurstTime(), process.getPriority()));
+        }
+
+        npp.compute();
+
+        OutputScreen outputScreen = new OutputScreen(
+                npp.getStackHistory(), npp.getTimeStackHistory(), npp.getTurnaroundTimeData(), npp.getWaitingTimeData(), npp.getProcessCount(), npp.getTotalTurnaroundTime(), npp.getTotalWaitingTime(), npp.getAverageTurnaroundTime(), npp.getAverageWaitingTime()
+        );
+
+        BasicInputPanel.this.removeAll();
+        BasicInputPanel.this.add(outputScreen);
+        BasicInputPanel.this.revalidate();
+        BasicInputPanel.this.repaint();
     }
 
     private void runPreSJF(){
