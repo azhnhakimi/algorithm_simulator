@@ -70,6 +70,7 @@ public class TurnaroundTable extends JPanel {
                 // System.out.println(i);
                 TurnAroundTimeVal values = this.data.get(i - 1);
                 // System.out.println(values.getProcessID());
+                // System.out.println("me");
                 if(j == 0){
                     String text = String.valueOf(values.getProcessID());
                     cellArray[i][j].setText(text);
