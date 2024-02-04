@@ -24,11 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-
-import utils.TurnAroundTimeVal;  
-import utils.WaitingTimeVal;     
+import java.util.Map;    
 
 public class PreemptiveSJFPanel extends JPanel {
 

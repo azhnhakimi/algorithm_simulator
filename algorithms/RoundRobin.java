@@ -72,7 +72,6 @@ public class RoundRobin {
     }
 
     public int getProcessCount(){
-        System.out.println(this.processCount);
         return this.processCount;
     }
 

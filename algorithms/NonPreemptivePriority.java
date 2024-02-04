@@ -161,7 +161,6 @@ public class NonPreemptivePriority {
     }
 
     public int getProcessCount() {
-        // System.out.println(this.processCount);
         return this.processCount;
     }
 }

@@ -1,0 +1,5 @@
+1. Open root folder of project in terminal
+2. To Compile :
+    javac -d . *.java
+3. To run : 
+    java Main

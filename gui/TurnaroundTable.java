@@ -20,14 +20,6 @@ public class TurnaroundTable extends JPanel {
         this.row = row;
         this.column = column;
         this.data = data;
-
-        // System.out.println(data.size() + "size");
-        // System.out.println(data.get(0).getProcessID() + "id");
-
-        // for (Map.Entry<Integer, TurnAroundTimeVal> entry : data.entrySet()) {
-        //     int key = entry.getValue().getProcessID();
-        //     System.out.println(key + "hi");
-        // }
         
         cellArray = new Cell[row][column];
         this.setLayout(new GridLayout(row, column));
@@ -63,14 +55,9 @@ public class TurnaroundTable extends JPanel {
         }
 
         // populate the table with data
-        // System.out.println(row);
         for(int i = 1; i < row; i++){
             for(int j = 0; j < column; j++){
-                // System.out.println(data.get(0).getProcessID());
-                // System.out.println(i);
                 TurnAroundTimeVal values = this.data.get(i - 1);
-                // System.out.println(values.getProcessID());
-                // System.out.println("me");
                 if(j == 0){
                     String text = String.valueOf(values.getProcessID());
                     cellArray[i][j].setText(text);
